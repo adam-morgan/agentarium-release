@@ -24,6 +24,10 @@
         margin: 0 auto;
         padding: 48px 16px 64px;
       }
+      .logo-container {
+        display: flex;
+        justify-content: center;
+      }
       .logo {
         width: 100%;
         max-width: 560px;
@@ -51,7 +55,9 @@
   </head>
   <body>
     <main>
-      <img class="logo" src="logo.png" alt="Agentarium" />
+      <div class="logo-container">
+        <img class="logo" src="logo.png" alt="Agentarium" />
+      </div>
       <p>
         A pixel-art office for your screen. Every running Claude Code session
         is a character at a desk: they face the monitor while working, and turn
@@ -60,26 +66,9 @@
 
       <h2>Linux</h2>
       <pre>curl -fsSL https://agentarium.adammorgan.ca/install.sh | sh</pre>
-      <p>
-        Installs the .deb or .rpm with your package manager, or the AppImage
-        otherwise.
-      </p>
 
       <h2>macOS and Windows</h2>
       <p>Coming soon.</p>
-
-      <p>
-        You need <a href="https://claude.com/claude-code">Claude Code</a>. On
-        first run Agentarium asks before adding its hooks to Claude Code's
-        settings, and takes them out again from its tray menu. It updates
-        itself.
-      </p>
-      <p>
-        Every download is on the
-        <a href="https://github.com/adam-morgan/agentarium-release/releases"
-          >releases page</a
-        >.
-      </p>
     </main>
   </body>
 </html>

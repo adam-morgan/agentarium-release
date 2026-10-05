@@ -1,14 +1,3 @@
-# Builds Agentarium from its private repo (FalcorX/agentarium) at a tag, on this
-# public repo's free runners, and publishes the release here, where installs and
-# the app's updates come from. Started by that repo's Release workflow for each
-# v* tag, or by hand (Run workflow, with the tag).
-#
-# SOURCE_DEPLOY_KEY: the private half of a read-only deploy key on FalcorX/agentarium.
-# PLATFORMS (a repo variable): which to build, of "linux mac windows"; linux if unset.
-# EVS_ACCOUNT_NAME, EVS_PASSWD: a castLabs EVS account, to VMP-sign the macOS and
-# Windows apps so Spotify's player works there; they build without it.
-# Only a dispatch or a run by hand starts this, never a pull request, so a fork
-# can't reach that secret.
 name: Build
 run-name: Build ${{ github.event.client_payload.tag || inputs.tag }}
 

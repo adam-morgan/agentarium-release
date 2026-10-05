@@ -4,6 +4,9 @@
 # v* tag, or by hand (Run workflow, with the tag).
 #
 # SOURCE_DEPLOY_KEY: the private half of a read-only deploy key on FalcorX/agentarium.
+# PLATFORMS (a repo variable): which to build, of "linux mac windows"; linux if unset.
+# EVS_ACCOUNT_NAME, EVS_PASSWD: a castLabs EVS account, to VMP-sign the macOS and
+# Windows apps so Spotify's player works there; they build without it.
 # Only a dispatch or a run by hand starts this, never a pull request, so a fork
 # can't reach that secret.
 name: Build
@@ -32,13 +35,31 @@ defaults:
     shell: bash
 
 jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - id: plan
+        run: |
+          all='[
+            {"name": "linux", "os": "ubuntu-latest", "targets": "--linux --x64"},
+            {"name": "mac", "os": "macos-latest", "targets": "--mac"},
+            {"name": "windows", "os": "windows-latest", "targets": "--win"}
+          ]'
+          matrix=$(jq -c --arg want "${PLATFORMS:-linux}" \
+            '[.[] | select(.name as $n | $want | split(" ") | index($n))]' <<<"$all")
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+        env:
+          PLATFORMS: ${{ vars.PLATFORMS }}
+
   build:
+    needs: plan
+    name: build (${{ matrix.name }})
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            targets: --linux --x64
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check the tag
@@ -54,6 +75,15 @@ jobs:
           node-version: 24
       - if: runner.os == 'Linux'
         run: sudo apt-get update -qq && sudo apt-get install -y -qq rpm
+      # Agentarium's npm scripts are written for bash.
+      - if: runner.os == 'Windows'
+        run: npm config set script-shell 'C:\Program Files\Git\bin\bash.exe'
+      - if: runner.os != 'Linux'
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - if: runner.os != 'Linux'
+        run: pip install --quiet --upgrade castlabs-evs
       - run: npm install --no-audit --no-fund --loglevel=error
       - run: node apps/desktop/set-version.ts "${TAG#v}"
       - run: npm run build
@@ -61,6 +91,8 @@ jobs:
         run: node build.ts && node stage.ts && npx electron-builder ${{ matrix.targets }} --publish always
         env:
           GH_TOKEN: ${{ github.token }}
+          EVS_ACCOUNT_NAME: ${{ secrets.EVS_ACCOUNT_NAME }}
+          EVS_PASSWD: ${{ secrets.EVS_PASSWD }}
 
   # electron-builder uploads into a draft, so nobody gets a half-built release.
   publish:

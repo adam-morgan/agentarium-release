@@ -1,0 +1,79 @@
+# Builds Agentarium from its private repo (FalcorX/agentarium) at a tag, on this
+# public repo's free runners, and publishes the release here, where installs and
+# the app's updates come from. Started by that repo's Release workflow for each
+# v* tag, or by hand (Run workflow, with the tag).
+#
+# SOURCE_DEPLOY_KEY: the private half of a read-only deploy key on FalcorX/agentarium.
+# Only a dispatch or a run by hand starts this, never a pull request, so a fork
+# can't reach that secret.
+name: Build
+run-name: Build ${{ github.event.client_payload.tag || inputs.tag }}
+
+on:
+  repository_dispatch:
+    types: [release]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The tag in FalcorX/agentarium to build, like v0.1.0
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.event.client_payload.tag || inputs.tag }}
+
+env:
+  TAG: ${{ github.event.client_payload.tag || inputs.tag }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            targets: --linux --x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check the tag
+        run: '[[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]] || { echo "Not a release tag: $TAG"; exit 1; }'
+      - uses: actions/checkout@v5
+        with:
+          repository: FalcorX/agentarium
+          ref: ${{ env.TAG }}
+          ssh-key: ${{ secrets.SOURCE_DEPLOY_KEY }}
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq rpm
+      - run: npm install --no-audit --no-fund --loglevel=error
+      - run: node apps/desktop/set-version.ts "${TAG#v}"
+      - run: npm run build
+      - working-directory: apps/desktop
+        run: node build.ts && node stage.ts && npx electron-builder ${{ matrix.targets }} --publish always
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  # electron-builder uploads into a draft, so nobody gets a half-built release.
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish the draft, with the tag's message as its notes
+        run: |
+          printf '%s\n' "$NOTES" > notes.md
+          pre=()
+          [[ "$TAG" == *-* ]] && pre=(--prerelease)
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" \
+            --draft=false --notes-file notes.md "${pre[@]}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NOTES: ${{ github.event.client_payload.notes }}

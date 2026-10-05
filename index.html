@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agentarium</title>
+    <link rel="icon" href="icon.png" />
+    <style>
+      :root {
+        --wall: #3d4460;
+        --ink: #eef0f6;
+        --muted: #b9bfd3;
+        --code: #262b3f;
+        --accent: #f2c14e;
+      }
+      body {
+        margin: 0;
+        background: var(--wall);
+        color: var(--ink);
+        font: 17px/1.55 system-ui, sans-serif;
+      }
+      main {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 48px 16px 64px;
+      }
+      .logo {
+        width: 100%;
+        max-width: 560px;
+        image-rendering: pixelated;
+      }
+      h2 {
+        margin-top: 40px;
+        font-size: 20px;
+      }
+      p,
+      li {
+        color: var(--muted);
+      }
+      pre {
+        background: var(--code);
+        padding: 14px 16px;
+        border-radius: 6px;
+        overflow-x: auto;
+        color: var(--ink);
+      }
+      a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img class="logo" src="logo.png" alt="Agentarium" />
+      <p>
+        A pixel-art office for your screen. Every running Claude Code session
+        is a character at a desk: they face the monitor while working, and turn
+        around to wave when they need you.
+      </p>
+
+      <h2>Linux</h2>
+      <pre>curl -fsSL https://agentarium.adammorgan.ca/install.sh | sh</pre>
+      <p>
+        Installs the .deb or .rpm with your package manager, or the AppImage
+        otherwise.
+      </p>
+
+      <h2>macOS and Windows</h2>
+      <p>Coming soon.</p>
+
+      <p>
+        You need <a href="https://claude.com/claude-code">Claude Code</a>. On
+        first run Agentarium asks before adding its hooks to Claude Code's
+        settings, and takes them out again from its tray menu. It updates
+        itself.
+      </p>
+      <p>
+        Every download is on the
+        <a href="https://github.com/adam-morgan/agentarium-release/releases"
+          >releases page</a
+        >.
+      </p>
+    </main>
+  </body>
+</html>

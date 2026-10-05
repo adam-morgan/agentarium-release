@@ -52,6 +52,15 @@ jobs:
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
         env:
           PLATFORMS: ${{ vars.PLATFORMS }}
+      # One draft for every platform's build to upload into; each making its
+      # own at once would leave several.
+      - name: Make the release's draft
+        run: |
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --draft \
+              --title "$TAG" --notes '' --target main
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   build:
     needs: plan
@@ -93,6 +102,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           EVS_ACCOUNT_NAME: ${{ secrets.EVS_ACCOUNT_NAME }}
           EVS_PASSWD: ${{ secrets.EVS_PASSWD }}
+      # The server on its own, which the Windows app runs inside WSL.
+      - if: runner.os == 'Linux'
+        working-directory: apps/desktop
+        run: |
+          node server-bundle.ts
+          gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber \
+            release/agentarium-server-linux-x64.tar.gz \
+            release/agentarium-server-linux-x64.tar.gz.sha512
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   # electron-builder uploads into a draft, so nobody gets a half-built release.
   publish:

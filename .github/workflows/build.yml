@@ -73,7 +73,7 @@ jobs:
           node-version: 24
       - if: runner.os == 'Linux'
         run: sudo apt-get update -qq && sudo apt-get install -y -qq rpm
-      # Agentarium's npm scripts are written for bash.
+      # codeArIum's npm scripts are written for bash.
       - if: runner.os == 'Windows'
         run: npm config set script-shell 'C:\Program Files\Git\bin\bash.exe'
       - if: runner.os != 'Linux'
@@ -97,8 +97,8 @@ jobs:
         run: |
           node server-bundle.ts
           gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber \
-            release/agentarium-server-linux-x64.tar.gz \
-            release/agentarium-server-linux-x64.tar.gz.sha512
+            release/codearium-server-linux-x64.tar.gz \
+            release/codearium-server-linux-x64.tar.gz.sha512
         env:
           GH_TOKEN: ${{ github.token }}
 

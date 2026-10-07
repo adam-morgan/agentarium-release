@@ -1,8 +1,8 @@
-# Agentarium releases
+# codeArIum releases
 
-Builds of [Agentarium](https://agentarium.adammorgan.ca).
+Builds of [codeArIum](https://codearium.dev).
 
 ## Install
 
-- macOS and Linux: `curl -fsSL https://agentarium.adammorgan.ca/install.sh | sh`
-- Windows (PowerShell): `irm https://agentarium.adammorgan.ca/install.ps1 | iex`
+- macOS and Linux: `curl -fsSL https://codearium.dev/install.sh | sh`
+- Windows (PowerShell): `irm https://codearium.dev/install.ps1 | iex`

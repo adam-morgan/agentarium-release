@@ -3,8 +3,14 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Agentarium</title>
+    <title>codeArIum</title>
     <link rel="icon" href="icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&display=swap"
+    />
     <style>
       :root {
         --wall: #3d4460;
@@ -12,6 +18,7 @@
         --muted: #b9bfd3;
         --code: #262b3f;
         --accent: #f2c14e;
+        --cream: #fffaf0;
       }
       body {
         margin: 0;
@@ -24,14 +31,30 @@
         margin: 0 auto;
         padding: 48px 16px 64px;
       }
-      .logo-container {
-        display: flex;
-        justify-content: center;
-      }
       .logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .mark {
         width: 100%;
-        max-width: 560px;
+        max-width: 320px;
         image-rendering: pixelated;
+      }
+      h1 {
+        margin: 8px 0 0;
+        font: 800 clamp(40px, 12vw, 72px) / 1 'JetBrains Mono', ui-monospace, monospace;
+        color: var(--cream);
+      }
+      h1 span {
+        background: linear-gradient(#9ad0ff, #3b8eea, #7a5ce0, #b05ce0);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .tagline {
+        text-align: center;
+        font-style: italic;
       }
       h2 {
         margin-top: 40px;
@@ -55,9 +78,11 @@
   </head>
   <body>
     <main>
-      <div class="logo-container">
-        <img class="logo" src="logo.png" alt="Agentarium" />
+      <div class="logo">
+        <img class="mark" src="icon.png" alt="" />
+        <h1>code<span>A</span>r<span>I</span>um</h1>
       </div>
+      <p class="tagline">Bring your AI coding environment to life.</p>
       <p>
         A pixel-art office for your screen. Every running Claude Code session
         is a character at a desk: they face the monitor while working, and turn
@@ -65,11 +90,11 @@
       </p>
 
       <h2>macOS and Linux</h2>
-      <pre>curl -fsSL https://agentarium.adammorgan.ca/install.sh | sh</pre>
+      <pre>curl -fsSL https://codearium.dev/install.sh | sh</pre>
 
       <h2>Windows</h2>
       <p>In PowerShell:</p>
-      <pre>irm https://agentarium.adammorgan.ca/install.ps1 | iex</pre>
+      <pre>irm https://codearium.dev/install.ps1 | iex</pre>
     </main>
   </body>
 </html>

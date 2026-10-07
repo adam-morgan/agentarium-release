@@ -1,14 +1,14 @@
-# Installs Agentarium:  irm https://agentarium.adammorgan.ca/install.ps1 | iex
+# Installs codeArIum:  irm https://codearium.dev/install.ps1 | iex
 # A per-user install, so no admin prompt; it updates itself from then on.
 # Nothing here touches Claude Code's settings: the app asks before connecting.
 & {
   $ErrorActionPreference = 'Stop'
   $ProgressPreference = 'SilentlyContinue'
 
-  $url = 'https://github.com/adam-morgan/agentarium-release/releases/latest/download/Agentarium-Setup.exe'
-  $setup = Join-Path $env:TEMP 'Agentarium-Setup.exe'
+  $url = 'https://github.com/adam-morgan/agentarium-release/releases/latest/download/codeArIum-Setup.exe'
+  $setup = Join-Path $env:TEMP 'codeArIum-Setup.exe'
 
-  Write-Host 'Downloading Agentarium...'
+  Write-Host 'Downloading codeArIum...'
   Invoke-WebRequest -Uri $url -OutFile $setup -UseBasicParsing
 
   # Downloaded here rather than in a browser, it carries no mark of the web,
@@ -16,9 +16,9 @@
   Start-Process -FilePath $setup -ArgumentList '/S' -Wait
   Remove-Item $setup
 
-  Write-Host 'Agentarium is installed. Open it from the Start menu.'
+  Write-Host 'codeArIum is installed. Open it from the Start menu.'
 
   if (-not (Get-Command claude -ErrorAction SilentlyContinue)) {
-    Write-Host "Claude Code isn't on your PATH yet; Agentarium needs it: https://claude.com/claude-code"
+    Write-Host "Claude Code isn't on your PATH yet; codeArIum needs it: https://claude.com/claude-code"
   }
 }

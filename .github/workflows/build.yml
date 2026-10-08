@@ -107,13 +107,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Publish the draft, with the tag's message as its notes
+      - name: Publish the draft, with the title and notes it was sent
         run: |
           printf '%s\n' "$NOTES" > notes.md
           pre=()
           [[ "$TAG" == *-* ]] && pre=(--prerelease)
           gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" \
-            --draft=false --notes-file notes.md "${pre[@]}"
+            --draft=false --title "${TITLE:-$TAG}" --notes-file notes.md "${pre[@]}"
         env:
           GH_TOKEN: ${{ github.token }}
+          TITLE: ${{ github.event.client_payload.title }}
           NOTES: ${{ github.event.client_payload.notes }}
